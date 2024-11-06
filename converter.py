@@ -78,34 +78,72 @@ def add_measurements(root, df, sensor_id):
     
     # Add results
     results = SubElement(result, 'results')
-    result_set = SubElement(results, 'ResultSet')
     
-    # Add parameters
-    parameters = SubElement(result_set, 'parameters')
-    prop_params = SubElement(parameters, 'PropertyParameters')
-    prop_params.set('gml:id', f'pp_Water_Levels_{sensor_id}')
+    # Property definitions
+    properties_data = [
+        {
+            'name': 'Pressure (ft H₂O)',
+            'uom': 'ft H₂O',
+            'column': 'Pressure (ft H₂O)'
+        },
+        {
+            'name': 'Elevation H₂O (ft)',
+            'uom': 'ft',
+            'column': 'Elevation H₂O (ft)'
+        },
+        {
+            'name': 'Temperature (deg F)',
+            'uom': 'deg F',
+            'column': 'Temperature (deg F)'
+        }
+    ]
     
-    properties = SubElement(prop_params, 'properties')
-    for idx, column in enumerate(['Pressure (ft H₂O)', 'Elevation H₂O (ft)', 'Temperature (deg F)'], 1):
+    # Create a separate ResultSet for each property
+    for idx, prop in enumerate(properties_data, 1):
+        result_set = SubElement(results, 'ResultSet')
+        
+        # Add parameters
+        parameters = SubElement(result_set, 'parameters')
+        prop_params = SubElement(parameters, 'PropertyParameters')
+        prop_params.set('gml:id', f'pp_Water_Levels_{sensor_id}_{idx}')
+        
+        properties = SubElement(prop_params, 'properties')
         property_elem = SubElement(properties, 'Property')
         property_elem.set('index', str(idx))
         property_elem.set('gml:id', f'prop{idx}_Water_Levels_{sensor_id}')
         
         prop_name = SubElement(property_elem, 'gml:name')
-        prop_name.text = column
+        prop_name.text = prop['name']
         
         type_data = SubElement(property_elem, 'typeData')
         type_data.text = 'double'
         
         uom = SubElement(property_elem, 'uom')
-        uom.text = column.split('(')[-1].strip(')')
+        uom.text = prop['uom']
+        
+        # Add data values for this property
+        data_values = SubElement(result_set, 'dataValues')
+        values = ' '.join(df[prop['column']].astype(str))
+        data_values.text = values
+
+    # Add sensor information after outcome
+    sensor = SubElement(reading_elem, 'sensor')
+    sensor_elem = SubElement(sensor, 'Sensor')
+    sensor_elem.set('gml:id', sensor_id)
     
-    # Add data values
-    data_values = SubElement(result_set, 'dataValues')
-    pressure_values = ' '.join(df['Pressure (ft H₂O)'].astype(str))
-    elevation_values = ' '.join(df['Elevation H₂O (ft)'].astype(str))
-    temp_values = ' '.join(df['Temperature (deg F)'].astype(str))
-    data_values.text = f'{pressure_values}\n{elevation_values}\n{temp_values}'
+    sensor_name = SubElement(sensor_elem, 'gml:name')
+    sensor_name.text = sensor_id
+    
+    sensor_class = SubElement(sensor_elem, 'class')
+    sensor_class.text = 'Piezometer'
+    
+    detector = SubElement(sensor_elem, 'detector')
+    detector_elem = SubElement(detector, 'Detector')
+    detector_elem.set('gml:id', 'metric')
+    
+    measurand = SubElement(detector_elem, 'measurand')
+    measurand.set('codeSpace', 'http://diggsml.org/prope/properties-diggs.xml#water_depth')
+    measurand.text = 'Water Depth'
 
 def convert_csv_to_xml(input_file):
     try:
