@@ -17,12 +17,12 @@
             <projectRef xlink:href="#p1"/>
             <referencePoint>
                 <PointLocation gml:id="p2-PZ-B-06-23">
-                    <gml:pos srsDimension="3" srsName="urn:diggs:def:crs:DIGGS:0.1:4326_5702" uomLabels="dega dega ftUS" axisLabels="latitude longitude height">38.02010315 83.84473716 0</gml:pos>
+                    <gml:pos srsDimension="3" srsName="urn:diggs:def:crs:DIGGS:0.1:4326_5702" uomLabels="dega dega ftUS" axisLabels="latitude longitude height">38.02010315 -83.84473716 0</gml:pos>
                 </PointLocation>
             </referencePoint>
             <centerLine>
                 <LinearExtent gml:id="cl-PZ-B-06-23">
-                    <gml:posList srsDimension="3" srsName="urn:diggs:def:crs:DIGGS:0.1:4326_5702" uomLabels="dega dega ftUS" axisLabels="latitude longitude height">38.02010315 83.84473716 0 38.02010315 83.84473716 -50</gml:posList>
+                    <gml:posList srsDimension="3" srsName="urn:diggs:def:crs:DIGGS:0.1:4326_5702" uomLabels="dega dega ftUS" axisLabels="latitude longitude height">38.02010315 -83.84473716 0 38.02010315 -83.84473716 -50</gml:posList>
                 </LinearExtent>
             </centerLine>
             <linearReferencing>
