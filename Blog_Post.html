@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Using DIGGS to Manage Piezometer Data</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 2em;
+            background-color: #fff;
+            color: #222;
+        }
+        .visualization-container {
+            width: 800px;
+            height: 800px;
+            margin: 20px auto;
+            position: relative;
+        }
+        .visualization-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;}
+
+        .csv-container {
+            background-color: #f5f5f5;
+            padding: 1em;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin-bottom: 1em;
+        }
+        .csv-header {
+            font-weight: bold;
+            white-space: pre;
+            font-family: monospace;
+        }
+        .csv-data {
+            white-space: pre;
+            font-family: monospace;
+        }
+        .col1 { color: #e41a1c; }
+        .col2 { color: #377eb8; }
+        .col3 { color: #4daf4a; }
+        .col4 { color: #984ea3; }
+        .col5 { color: #ff7f00; }
+        .col6 { color: #a65628; }
+        .col7 { color: #f781bf; }
+        .col8 { color: #999999; }
+        .source-link {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <div style="background-color: #f5f5f5; padding: 1em; border-left: 4px solid #0077cc; margin-bottom: 2em;">
+        <p style="margin: 0;">This work was completed as part of the Vendor Support portion of the ASCE Geo-Institute Technical Committee Special Project Fund.</p>
+    </div>
+    
+    <h2>The Challenge of Piezometer Data</h2>
+    <p>Piezometers typically produce data in a simple, time-series format, usually stored in CSV files. A typical example looks like this:</p>
+    <div class="csv-container">
+        <div class="csv-header">
+<span class="col1">Sensor</span>,<span class="col2">Date</span>,<span class="col3">Pressure (ft H₂O)</span>,<span class="col4">Elevation H₂O (ft)</span>,<span class="col5">Temperature (deg F)</span>,<span class="col6">Latitude</span>,<span class="col7">Longitude</span>,<span class="col8">Depth</span>
+        </div>
+        <div class="csv-data">
+<span class="col1">PZ-B-03-23</span>,<span class="col2">2024-11-5 13:00:01</span>,<span class="col3">23.683084983767312</span>,<span class="col4">774.1830849837672</span>,<span class="col5">56.97303791760282</span>,<span class="col6">38.01979088794593</span>,<span class="col7">-83.84532852561108</span>,<span class="col8">8.382</span>
+        </div>
+        <p class="source-link">View complete example: <a href="https://github.com/DIGGSml/Diggs_Piezometer_Converter/blob/main/Piezometers_CSVs/modified_PZ-B-03-23.csv">modified_PZ-B-03-23.csv</a></p>
+    </div>
+</body>
+</html>
+    <p>This format is straightforward: each row represents a measurement from a specific sensor at a given time, including key parameters like pressure, water elevation, temperature, and location. This is a very common format for any continuously collected geotechnical dataset. While manageable for individual datasets, this approach can become unwieldy when dealing with multiple piezometers or long-term monitoring projects. You might find yourself with numerous CSV files, each needing to be processed separately.</p>
+
+    <h2>Introducing DIGGS for Standardized Data Management</h2>
+    <p>DIGGS offers a more robust solution. It's an industry-standard XML-based format that provides a structured way to store geotechnical data, making it easier to share, analyze, and archive.</p>
+    <p>To simplify the transition to DIGGS, we've developed a user-friendly converter, available on GitHub: <a href="https://github.com/DIGGSml/Diggs_Piezometer_Converter">DIGGS Piezometer Converter</a>. This tool takes your CSV data and transforms it into DIGGS format, ready for use in various geotechnical software and analysis platforms.</p>
+
+    <h2>Understanding How DIGGS Stores Continuous Data</h2>
+    <p>Let's delve into how DIGGS handles continuous data like piezometer readings. Here's a snippet from DIGGS file representing piezometer data readings:</p>
+    <pre><code class="language-xml">&lt;reading&gt;
+        &lt;Reading gml:id="Reading_Water_Levels_PZ-B-03-23"&gt;
+            &lt;responseZoneLocation xlink:href="#rzl"/&gt;
+            &lt;outcome&gt;
+                &lt;MonitorResult gml:id="Result_Water_Levels_PZ-B-03-23"&gt;
+                    &lt;timeDomain&gt;
+                        &lt;TimePositionList gml:id="TP_Water_Levels_PZ-B-03-23"&gt;
+                            &lt;timePositionList&gt;2024-11-05T13:00:01 2024-11-05T12:30:01&lt;/timePositionList&gt;
+                        &lt;/TimePositionList&gt;
+                    &lt;/timeDomain&gt;
+                    &lt;results&gt;
+                        &lt;ResultSet&gt;
+                            &lt;parameters&gt;
+                                &lt;PropertyParameters gml:id="pp_Water_Levels_PZ-B-03-23_1"&gt;
+                                    &lt;properties&gt;
+                                        &lt;Property index="1" gml:id="prop1_Water_Levels_PZ-B-03-23"&gt;
+                                            &lt;propertyName&gt;Pressure (ft H₂O)&lt;/propertyName&gt;
+                                            &lt;typeData&gt;double&lt;/typeData&gt;
+                                            &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml"&gt;water_depth&lt;/propertyClass&gt;
+                                            &lt;uom&gt;ft&lt;/uom&gt;
+                                        &lt;/Property&gt;
+                                        &lt;Property index="2" gml:id="prop2_Water_Levels_PZ-B-03-23"&gt;
+                                            &lt;propertyName&gt;Elevation H₂O (ft)&lt;/propertyName&gt;
+                                            &lt;typeData&gt;double&lt;/typeData&gt;
+                                            &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml"&gt;water_elev&lt;/propertyClass&gt;
+                                            &lt;uom&gt;ft&lt;/uom&gt;
+                                        &lt;/Property&gt;
+                                        &lt;Property index="3" gml:id="prop3_Water_Levels_PZ-B-03-23"&gt;
+                                            &lt;propertyName&gt;Temperature (deg F)&lt;/propertyName&gt;
+                                            &lt;typeData&gt;double&lt;/typeData&gt;
+                                            &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml"&gt;temperature&lt;/propertyClass&gt;
+                                            &lt;uom&gt;degF&lt;/uom&gt;
+                                        &lt;/Property&gt;
+                                    &lt;/properties&gt;
+                                &lt;/PropertyParameters&gt;
+                            &lt;/parameters&gt;
+                            &lt;dataValues&gt;23.683084983767312,774.1830849837672,56.97303791760282 23.644656287609216,774.1446562876092,57.01296621093711&lt;/dataValues&gt;
+                        &lt;/ResultSet&gt;
+                    &lt;/results&gt;
+                &lt;/MonitorResult&gt;
+            &lt;/outcome&gt;
+            &lt;sensor&gt;
+                &lt;Sensor gml:id="PZ-B-03-23"&gt;
+                    &lt;gml:name&gt;PZ-B-03-23&lt;/gml:name&gt;
+                    &lt;class&gt;Pressure transducer&lt;/class&gt;
+                    &lt;detector&gt;
+                        &lt;Detector gml:id="metric"&gt;
+                            &lt;measurand codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml"&gt;water_depth_calc&lt;/measurand&gt;
+                        &lt;/Detector&gt;
+                    &lt;/detector&gt;
+                &lt;/Sensor&gt;
+            &lt;/sensor&gt;
+        &lt;/Reading&gt;
+    &lt;/reading&gt;</code></pre>
+    <br>
+    <p style="font-size: 0.9em; color: #666; margin-top: -1em; margin-bottom: 1em;">View complete DIGGS XML file: <a href="https://github.com/DIGGSml/Diggs_Piezometer_Converter/blob/main/DIGGS_Piezometers/modified_PZ-B-03-23.xml">modified_PZ-B-03-23.xml</a></p>
+
+    <h2>Breaking Down the DIGGS Structure</h2>
+    <p>While the XML structure may look complex at first glance, it follows a logical organization that we can break down into key components:</p>
+    <ol>
+        <li>
+            <p><strong>Time:</strong> The <code>&lt;TimePositionList&gt;</code> element stores the timestamps associated with your measurements. Each time point is clearly defined, ensuring accurate temporal analysis. DIGGS requires ISO 8601 time format and uses a space " " between readings.</p>
+            <pre><code class="language-xml">&lt;TimePositionList gml:id="TP_Water_Levels_PZ-B-03-23"&gt;
+    &lt;timePositionList&gt;2024-11-05T13:00:01 2024-11-05T12:30:01&lt;/timePositionList&gt;
+&lt;/TimePositionList&gt;</code></pre>
+        </li>
+        <li>
+            <p><strong>Properties:</strong> The <code>&lt;PropertyParameters&gt;</code> section defines the types of measurements collected. Each property includes its name, data type, standardized code, and unit of measure:</p>
+            <pre><code class="language-xml">&lt;properties&gt;
+                &lt;Property index="1" gml:id="prop1_Water_Levels_PZ-B-03-23"&gt;
+                    &lt;propertyName&gt;Pressure (ft H₂O)&lt;/propertyName&gt;
+                    &lt;typeData&gt;double&lt;/typeData&gt;
+                    &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml"&gt;water_depth&lt;/propertyClass&gt;
+                    &lt;uom&gt;ft&lt;/uom&gt;
+                &lt;/Property&gt;
+                &lt;Property index="2" gml:id="prop2_Water_Levels_PZ-B-03-23"&gt;
+                    &lt;propertyName&gt;Elevation H₂O (ft)&lt;/propertyName&gt;
+                    &lt;typeData&gt;double&lt;/typeData&gt;
+                    &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml"&gt;water_elev&lt;/propertyClass&gt;
+                    &lt;uom&gt;ft&lt;/uom&gt;
+                &lt;/Property&gt;
+                &lt;Property index="3" gml:id="prop3_Water_Levels_PZ-B-03-23"&gt;
+                    &lt;propertyName&gt;Temperature (deg F)&lt;/propertyName&gt;
+                    &lt;typeData&gt;double&lt;/typeData&gt;
+                    &lt;propertyClass codeSpace="https://diggsml.org/def/codes/DIGGS/0.1/properties.xml"&gt;temperature&lt;/propertyClass&gt;
+                    &lt;uom&gt;degF&lt;/uom&gt;
+                &lt;/Property&gt;
+            &lt;/properties&gt;</code></pre>
+        </li>
+        <li>
+            <p><strong>Data Values:</strong> The <code>&lt;dataValues&gt;</code> element contains the actual measurements.</p>
+            <pre><code class="language-xml">&lt;dataValues&gt;23.683084983767312,774.1830849837672,56.97303791760282 23.644656287609216,774.1446562876092,57.01296621093711&lt;/dataValues&gt;</code></pre>
+        </li>
+    </ol>
+
+    <h2>From DIGGS to Visualization: Bringing Your Data to Life</h2>
+    <p>The real power of DIGGS comes from its ability to facilitate data analysis and visualization. We've included a Jupyter Notebook called <code>visualize_data.ipynb</code> in the GitHub repository that demonstrates how to create interactive GIS maps from your DIGGS piezometer data.</p>
+    <p>The code reads all your DIGGS files, extracts the location (latitude and longitude), time, and water elevation data. Then, it generates a dynamic map using Plotly, where you can visualize the water elevation at each piezometer location over time. You can scrub through the timeline and see how water levels change across your site. The code is designed to work with multiple DIGGS files, so you can easily visualize data from all your piezometers in a single, interactive map.</p>
+    
+    <div class="visualization-container">
+        <iframe 
+            src="https://raw.githack.com/DIGGSml/Diggs_Piezometer_Converter/main/piezometer_visualization.html"
+            class="visualization-iframe"
+            title="Piezometer Visualization"
+            allowfullscreen>
+        </iframe>
+    </div>
+    <p><em>Interactive visualization: Use the timeline controls to see how water levels change over time. You can zoom, pan, and hover over points for detailed information.</em></p>
+        <h2>Conclusion</h2>
+    <p>DIGGS provides a powerful and standardized way to manage geotechnical data, including piezometer readings. By converting your CSV data to DIGGS using our converter and leveraging the provided visualization tools, you can streamline your data management workflow, improve data sharing, and gain valuable insights from interactive visualizations.</p>
+    <p>We encourage you to explore the <a href="https://github.com/DIGGSml/Diggs_Piezometer_Converter">GitHub repository</a>, try out the converter and visualization tools, and start incorporating DIGGS into your geotechnical projects! Please feel free to contribute to the repository with issues or pull requests to help expand this powerful open source tool.</p>
+    <hr style="margin: 2em 0; border: none; border-top: 1px solid #ddd;">
+    <div style="margin: 2em 0; font-family: Arial, sans-serif;">
+        <p style="margin-bottom: 0.5em; font-weight: bold;">
+            Ross Cutts, P.E. MSCE, Part 107 Pilot
+        </p>
+        <div style="margin: 0; color: #555; line-height: 1.4;">
+            <p style="margin: 0 0 1em 0;">
+                President<br>
+                Geosetta
+            </p>
+            <p style="margin: 0;">
+                Senior Engineer<br>
+                Research, Development, and Innovation (RDI) Group<br>
+                Schnabel Engineering
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+</body>
+</html>
